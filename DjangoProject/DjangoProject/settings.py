@@ -172,21 +172,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #DRF所有配置项都写在REST_FRAMEWORK字典中
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (                #全局认证配置
         'rest_framework.authentication.BasicAuthentication',   # 基本认证
         'rest_framework.authentication.SessionAuthentication',  # session认证
     ),
-    'DEFAULT_THROTTLE_CLASSES': (                                #限流配置
+    'DEFAULT_THROTTLE_CLASSES': (                                #全局限流配置
         'rest_framework.throttling.AnonRateThrottle',            #匿名用户
         'rest_framework.throttling.UserRateThrottle',             #登录用户
     ),
-    'DEFAULT_THROTTLE_RATES': {                            #限流配置
+    'DEFAULT_THROTTLE_RATES': {                            #全局限流配置
         'anon': '100/day',                           #匿名频次 一天10次
         'user': '300/day',                          #登录用户频次
     },
     'DEFAULT_FILTER_BACKENDS':(
-        'django_filters.rest_framework.DjangoFilterBackend',  #配置后端过滤Filtering
+        'django_filters.rest_framework.DjangoFilterBackend',  #全局配置后端过滤Filtering
     ),
+    # 'DEFAULT_PAGINATION_CLASS': (
+        # 'rest_framework.pagination.PageNumberPagination',   #全局分页配置
+        # 'PAGE_SIZE':100                                      # 每页数目
+    # ),
+
 }
 
 #上传的文件存放目录位置

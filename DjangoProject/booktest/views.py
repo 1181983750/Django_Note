@@ -2,9 +2,10 @@ import logging
 import re
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,13 +14,20 @@ from booktest.models import BookInfo, HeroInfo
 from booktest.serializer import BookInfoModelSerializer, HeroInfoModelSerializer, GetHeroInfoModelSerializer
 
 
+# 自定义分页控制类名  要写到最前面 要不后面使用分页的类视图访问不到
+class LargeResultsSetPage(PageNumberPagination):
+    #http://127.0.0.1:8000/books/heros/?page=1&page_size=3 第一页显示3条
+    page_query_param = 'page'  # 前端发送的当前页数关键字名
+    page_size_query_param = 'page_size'  #前端发送的每页显示条数关键字名
+    max_page_size = 10  #限制前端传来最大显示条数/页 超过无效
+
+
 class BookInfoViewSet(ModelViewSet):
     """定义类视图"""
     #指定查询集 把数据表所有数据给这个对象
     queryset = BookInfo.objects.all()
     #
     serializer_class = BookInfoModelSerializer
-    # permission_classes = [permissions.IsAuthenticated] #只有登录的用户才能访问的接口
 
     """下面可以自定义高级查询等操作的接口"""
     # detail为False, books/latest/
@@ -49,8 +57,10 @@ class BookInfoViewSet(ModelViewSet):
 class HeroInfoViewSet(ModelViewSet):
     queryset = HeroInfo.objects.all()
     # serializer_class = HeroInfoModelSerializer
+    pagination_class = LargeResultsSetPage #指定分页类 写你自定义的类对象
+    permission_classes = [permissions.IsAuthenticated] #只有登录的用户才能访问的接口
 
-    #http://127.0.0.1:8000/books/heros/?author=尤雨溪
+    # http://127.0.0.1:8000/books/heros/?author=尤雨溪
     filter_fields  = ['author']  #配置要过滤的字段
     # http://127.0.0.1:8000/books/heros/?ordering_=-id  为降序
     filter_backends = [OrderingFilter, DjangoFilterBackend,]   #指定过滤后端为排序而不是过滤

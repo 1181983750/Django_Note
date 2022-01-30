@@ -21,14 +21,17 @@ from django.contrib import admin #自带的admin站点
 from django.urls import path, include
 
 #定义前端路由页面    返回定义的函数
-from django.views.static import serve
+
 
 urlpatterns = [
     path('admin/', admin.site.urls), #自带的admin站点
     #默认进入http://127.0.0.1:8000/books/ 自动跳转到booktest应用下的子路由
     path('books/',include('booktest.urls'))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#实例化
+#创建路由器（路由url的地址，指定一个视图集）
 
+#生成路由插入到上面定义的urlpatterns路由路径列表里面
 """
     path('index/',appviews.index),
     path('detail/',appviews.detail),
